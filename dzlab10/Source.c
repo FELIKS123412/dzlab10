@@ -10,7 +10,7 @@ void main()
 {
     setlocale(LC_ALL, "RUS");
 
-    int choice;
+    int vibor;
     int go = 1;
 
     do {
@@ -22,12 +22,12 @@ void main()
         printf("5. Выход\n");
         printf("Выберите пункт меню (1-5): ");
 
-        if (scanf("%d", &choice) != 1) {
+        if (scanf("%d", &vibor) != 1) {
             printf("Ошибка ввода!\n");
             break;
         }
 
-        switch (choice)
+        switch (vibor)
         {
         case 1:
         {
