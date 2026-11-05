@@ -17,6 +17,7 @@ double area_sector(double r) - вычисление площади сектор�
 void print_definition(void) — вывод определения и геометрических свойств фигуры;
 void draw_sector(int draw_r, char contr, char fill) — отрисовка сектора круга указанным символом;
 double compare_sectors(double s1, double s2) — вычисление разности площадей двух секторов; 
+
 ---
 
 ## 1. Алгоритм и блок-схема
