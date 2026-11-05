@@ -6,57 +6,52 @@
 #include <locale.h>
 #include <math.h>
 
-void main()
-{
+double area_sector(double r);
+void print_definition(void);
+void draw_sector(int draw_r, char contr, char fill);
+double compare_sectors(double s1, double s2);
+
+void main() {
     setlocale(LC_ALL, "RUS");
 
     int vibor;
-    int go = 1;
+    int draw_r;
+    double r, s;
+    double r1, r2, s1, s2, diff;
+    char fill, contr;
 
     do {
-        printf("\n================ M E N U ================\n");
-        printf("1. Рассчитать площадь сектора\n");
-        printf("2. Вывести определение фигуры\n");
-        printf("3. Нарисовать фигуру\n");
-        printf("4. Сравнить два сектора по площади\n");
-        printf("5. Выход\n");
-        printf("Выберите пункт меню (1-5): ");
+        printf("\nМеню операций для сектора круга:\n");
+        printf("1 - Рассчитать площадь фигуры\n");
+        printf("2 - Вывести определение фигуры\n");
+        printf("3 - Нарисовать фигуру\n");
+        printf("4 - Сравнить два сектора по площади\n");
+        printf("0 - Выход\n");
+        printf("Выберите операцию: ");
 
-        if (scanf("%d", &vibor) != 1) {
+        if (scanf("%d", &vibor) ) {
             printf("Ошибка ввода!\n");
-            break;
+            
         }
 
-        switch (vibor)
-        {
+        switch (vibor) {
         case 1:
-        {
-            double r;
             printf("Введите радиус сектора: ");
             scanf("%lf", &r);
             if (r < 0) {
                 printf("Радиус не может быть отрицательным.\n");
             }
             else {
-                double area = 0.125 * M_PI * r * r;
-                printf("Площадь сектора круга (45 градусов): %.2f\n", area);
+                s = area_sector(r);
+                printf("Площадь сектора круга (45 градусов): %.2f\n", s);
             }
             break;
-        }
-        case 2:
-        {
-            printf("\n--- Определение фигуры ---\n");
-            printf("Сектор круга — это часть круга, ограниченная дугой окружности\n");
-            printf("и двумя радиусами (в данном случае: осью Y и прямой y = x,\n");
-            printf("что составляет угол 45 градусов или пи/4 радиан).\n");
-            break;
-        }
-        case 3:
-        {
-            char fill;
-            char contr;
-            int a;
 
+        case 2:
+            print_definition();
+            break;
+
+        case 3:
             printf("Введите символ для контура фигуры: ");
             scanf(" %c", &contr);
 
@@ -64,74 +59,17 @@ void main()
             scanf(" %c", &fill);
 
             printf("Введите размер фигуры (радиус): ");
-            scanf("%d", &a);
+            scanf("%d", &draw_r);
 
-            if (a < 2)
-            {
+            if (draw_r < 2) {
                 printf("Ошибка: размер должен быть не меньше 2.\n");
             }
-            else
-            {
-                printf("\n");
-                for (int y = a; y >= -1; y--)
-                {
-                    for (int x = -1; x <= a; x++)
-                    {
-                        if (x == 0 && y >= 0 && y < a)
-                        {
-                            printf("| ");
-                        }
-                        else if (x == 0 && y == a)
-                        {
-                            printf("^ ");
-                        }
-                        else if (y == 0 && x > 0 && x < a)
-                        {
-                            printf("--");
-                        }
-                        else if (y == 0 && x == a)
-                        {
-                            printf("> ");
-                        }
-                        else if (x == 0 && y == 0)
-                        {
-                            printf("+ ");
-                        }
-                        else
-                        {
-                            if (x >= 0 && y >= 0)
-                            {
-                                int r2 = x * x + y * y;
-                                int a2 = a * a;
-
-                                int acr = (abs(r2 - a2) <= a);
-                                int diagonal = (x == y);
-                                int bound = (x == 0 && y <= a);
-
-                                if ((acr || diagonal || bound) && y >= x)
-                                {
-                                    printf("%c ", contr);
-                                    continue;
-                                }
-
-                                if (r2 < a2 && y > x)
-                                {
-                                    printf("%c ", fill);
-                                    continue;
-                                }
-                            }
-
-                            printf("  ");
-                        }
-                    }
-                    printf("\n");
-                }
+            else {
+                draw_sector(draw_r, contr, fill);
             }
             break;
-        }
+
         case 4:
-        {
-            double r1, r2;
             printf("--- Первый сектор ---\n");
             printf("Введите радиус: ");
             scanf("%lf", &r1);
@@ -145,34 +83,93 @@ void main()
                 break;
             }
 
-            double area1 = 0.125 * M_PI * r1 * r1;
-            double area2 = 0.125 * M_PI * r2 * r2;
+            s1 = area_sector(r1);
+            s2 = area_sector(r2);
+            diff = compare_sectors(s1, s2);
 
-            printf("Площадь 1-го сектора: %.2f\n", area1);
-            printf("Площадь 2-го сектора: %.2f\n", area2);
+            printf("Площадь 1-го сектора: %.2f\n", s1);
+            printf("Площадь 2-го сектора: %.2f\n", s2);
 
-            if (area1 > area2) {
-                printf("Первый сектор больше по площади.\n");
+            if (diff > 0) {
+                printf("Первый сектор больше второго на %.2f\n", diff);
             }
-            else if (area2 > area1) {
-                printf("Второй сектор больше по площади.\n");
+            else if (diff < 0) {
+                printf("Второй сектор больше первого на %.2f\n", -diff);
             }
             else {
                 printf("Площади секторов равны.\n");
             }
             break;
-        }
-        case 5:
-        {
-            printf("Выход из программы...\n");
-            go = 0;
+
+        case 0:
+            printf("Завершение программы.\n");
+            break;
+
+        default:
+            printf("Неверный пункт меню, попробуйте снова.\n");
             break;
         }
-        default:
-        {
-            printf("Неверный выбор! Пожалуйста, выберите от 1 до 5.\n");
-        }
-        }
 
-    } while (go != 0);
+    } while (vibor != 0);
+}
+
+double area_sector(double r) {
+    return 0.125 * M_PI * r * r;
+}
+
+void print_definition(void) {
+    printf("\n--- Определение фигуры ---\n");
+    printf("Сектор круга — это часть круга, ограниченная дугой окружности\n");
+    printf("и двумя радиусами (в данном случае: осью Y и прямой y = x,\n");
+    printf("что составляет угол 45 градусов или пи/4 радиан).\n");
+}
+
+void draw_sector(int draw_r, char contr, char fill) {
+    printf("\n");
+    for (int y = draw_r; y >= -1; y--) {
+        for (int x = -1; x <= draw_r; x++) {
+            if (x == 0 && y >= 0 && y < draw_r) {
+                printf("| ");
+            }
+            else if (x == 0 && y == draw_r) {
+                printf("^ ");
+            }
+            else if (y == 0 && x > 0 && x < draw_r) {
+                printf("--");
+            }
+            else if (y == 0 && x == draw_r) {
+                printf("> ");
+            }
+            else if (x == 0 && y == 0) {
+                printf("+ ");
+            }
+            else {
+                if (x >= 0 && y >= 0) {
+                    int r2 = x * x + y * y;
+                    int a2 = draw_r * draw_r;
+
+                    int acr = (abs(r2 - a2) <= draw_r);
+                    int diagonal = (x == y);
+                    int bound = (x == 0 && y <= draw_r);
+
+                    if ((acr || diagonal || bound) && y >= x) {
+                        printf("%c ", contr);
+                        continue;
+                    }
+
+                    if (r2 < a2 && y > x) {
+                        printf("%c ", fill);
+                        continue;
+                    }
+                }
+
+                printf("  ");
+            }
+        }
+        printf("\n");
+    }
+}
+
+double compare_sectors(double s1, double s2) {
+    return s1 - s2;
 }
